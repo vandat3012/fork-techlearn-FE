@@ -125,7 +125,7 @@ const handleLogout = async () => {
     justify-content: space-evenly;
     height: 30px;
     width: 120px;
-    margin-top: 26px;
+    margin-top: 24px;
     border-radius: 20px;
     background-color: #d2d2d2;
     flex-shrink: 0;

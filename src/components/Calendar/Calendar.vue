@@ -85,7 +85,7 @@ import frNumberingSystem from '@syncfusion/ej2-cldr-data/supplemental/numberingS
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import { useStore } from "vuex";
-import { computed,inject } from "vue";
+import { computed } from "vue";
 
 const rootApi = process.env.VUE_APP_ROOT_API;
 
@@ -140,7 +140,6 @@ const dropListFields = {
   text: "OwnerText",
   value: "Id"
 }
-const getPointsOfStudent = inject('getPointsOfStudent');
 
 const getOwnerDataSource = async () => {
 
@@ -237,13 +236,12 @@ const onActionBegin = async (args) => {
           }
         });
 
-        toast.success('Đặt lịch thành công! Vui lòng kiểm tra gmail để xem chi tiết');
+        toast.success('Đặt lịch thành công! Vui lòng kiểm tra gmail để xem chi tiết',{
+          autoClose: 1500
+        });
+        await store.dispatch('fetchUser');
 
-        await getPointsOfStudent();
-
-        await nextTick(() => {
-    scheduleObj.value.refreshEvents();
-  });
+        await nextTick();
         isLoading.value = false;
         isStudentBooking.value = false;
 
@@ -259,18 +257,21 @@ const onActionBegin = async (args) => {
           }
         });
 
-        toast.success('Cập nhật lịch thành công!');
-
+        toast.success('Tạo lịch thành công!',{
+          autoClose: 1200
+        });
+        
+        scheduleObj.value.refreshEvents();
+        
         return;
       }
     } catch (error) {
-      toast.error('Cập nhật lịch thất bại!');
+      toast.error('Tạo lịch thất bại!',{
+        autoClose: 1200
+      });
       console.log(error);
       isStudentBooking.value = false;
       isLoading.value = false;
-    }finally {
-      isLoading.value = false;
-      isStudentBooking.value = false;
     }
   } else if (args.requestType === 'eventRemove') {
     try {
@@ -279,10 +280,15 @@ const onActionBegin = async (args) => {
           'Authorization': `Bearer ${accessToken}`
         }
       });
-      toast.success('Xóa lịch thành công!');
+      toast.success('Xóa lịch thành công!',{
+        autoClose: 1200
+      });
+      await store.dispatch('fetchUser');
     } catch (error) {
       console.error('Error deleting event:', error);
-      toast.error('Không thể xóa sự kiện!');
+      toast.error('Không thể xóa sự kiện!',{
+        autoClose: 1200
+      });
     }
   } else if (args.requestType === 'eventChange') {
     try {
@@ -296,9 +302,13 @@ const onActionBegin = async (args) => {
           'Authorization': `Bearer ${accessToken}`
         }
       });
-      toast.success('Cập nhật lịch thành công!');
+      toast.success('Cập nhật lịch thành công!',{
+        autoClose: 1200
+      });
     } catch (error) {
-      toast.error('Cập nhật lịch thất bại!');
+      toast.error('Cập nhật lịch thất bại!',{
+        autoClose: 1200
+      });
     } finally {
       isLoading.value = false;
       isStudentBooking.value = false;

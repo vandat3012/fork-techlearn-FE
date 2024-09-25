@@ -53,7 +53,6 @@ import { useStore } from 'vuex';
 import { toast } from 'vue3-toastify';
 import { computed } from 'vue';
 import axios from 'axios';
-import { provide,watch } from 'vue';
 
 const router = useRouter();
 const toggleSidebar = inject('toggleSidebar');
@@ -61,7 +60,7 @@ const toggleSidebar = inject('toggleSidebar');
 const store = useStore();
 const isLoggedIn = computed(() => store.getters.isLoggedIn);
 const user = computed(() => store.getters.user);
-const points = ref(0);
+const points = computed(() => store.getters.points);
 const isUser = computed(() => {
     return user.value?.roles?.some(role => role.name === "USER") || false;
 });
@@ -87,46 +86,12 @@ const handleLogout = async () => {
         console.log(err);
     }
 };
-const getPointsOfStudent = async () => {
-    try {
-        const accessToken = localStorage.getItem("accessToken");
-        const userId = user.value.id; 
-        const response = await axios.get("http://localhost:8181/api/v1/users/points", {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            },
-            params: {
-                idUser: userId 
-            }
-        });
-        console.log(response.data.result.points);
-        points.value = response.data.result.points;
-        console.log(isUser)
-        await fetchPoints();
-    } catch (error) {
-        console.error(error);
-    }
-};
-watch(points, (newValue) => {
-    console.log("Points updated: ", newValue); // Debug log
-});
 
-// Fetch points when logged in and user data is available
-watch([isLoggedIn, user], (newValues) => {
-    if (newValues[0] && newValues[1]) {
-        getPointsOfStudent(); // Cập nhật điểm khi component được gắn vào
+onMounted(() => { 
+    if (!isLoggedIn.value) {
+        store.dispatch('fetchUser'); 
     }
-});
-
-onMounted(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-        store.dispatch('fetchUser').then(() => {
-            getPointsOfStudent(); // Cập nhật điểm khi component được gắn vào
-        });
-    }
-});
-provide('getPointsOfStudent', getPointsOfStudent);
+}); 
 </script>
 
 <style scoped>

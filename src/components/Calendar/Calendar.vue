@@ -85,7 +85,7 @@ import frNumberingSystem from '@syncfusion/ej2-cldr-data/supplemental/numberingS
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import { useStore } from "vuex";
-import { computed } from "vue";
+import { computed,inject } from "vue";
 
 const rootApi = process.env.VUE_APP_ROOT_API;
 
@@ -140,6 +140,7 @@ const dropListFields = {
   text: "OwnerText",
   value: "Id"
 }
+const getPointsOfStudent = inject('getPointsOfStudent');
 
 const getOwnerDataSource = async () => {
 
@@ -238,7 +239,11 @@ const onActionBegin = async (args) => {
 
         toast.success('Đặt lịch thành công! Vui lòng kiểm tra gmail để xem chi tiết');
 
-        await nextTick();
+        await getPointsOfStudent();
+
+        await nextTick(() => {
+    scheduleObj.value.refreshEvents();
+  });
         isLoading.value = false;
         isStudentBooking.value = false;
 
@@ -263,6 +268,9 @@ const onActionBegin = async (args) => {
       console.log(error);
       isStudentBooking.value = false;
       isLoading.value = false;
+    }finally {
+      isLoading.value = false;
+      isStudentBooking.value = false;
     }
   } else if (args.requestType === 'eventRemove') {
     try {

@@ -44,7 +44,6 @@
             </div>
         </nav>
     </header>
-    <Calendar @requestPoints="getPointsOfStudent" />
 </template>
 
 <script setup>
@@ -54,7 +53,7 @@ import { useStore } from 'vuex';
 import { toast } from 'vue3-toastify';
 import { computed } from 'vue';
 import axios from 'axios';
-import Calendar from '../Calendar/Calendar.vue';
+import { provide,watch } from 'vue';
 
 const router = useRouter();
 const toggleSidebar = inject('toggleSidebar');
@@ -65,16 +64,6 @@ const user = computed(() => store.getters.user);
 const points = ref(0);
 const isUser = computed(() => {
     return user.value?.roles?.some(role => role.name === "USER") || false;
-});
-
-
-onMounted(() => {
-  const accessToken = localStorage.getItem("accessToken");
-  if (accessToken) {
-    store.dispatch('fetchUser').then(() => {
-      getPointsOfStudent();
-    });
-  }
 });
 
 
@@ -118,6 +107,26 @@ const getPointsOfStudent = async () => {
         console.error(error);
     }
 };
+watch(points, (newValue) => {
+    console.log("Points updated: ", newValue); // Debug log
+});
+
+// Fetch points when logged in and user data is available
+watch([isLoggedIn, user], (newValues) => {
+    if (newValues[0] && newValues[1]) {
+        getPointsOfStudent(); // Cập nhật điểm khi component được gắn vào
+    }
+});
+
+onMounted(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+        store.dispatch('fetchUser').then(() => {
+            getPointsOfStudent(); // Cập nhật điểm khi component được gắn vào
+        });
+    }
+});
+provide('getPointsOfStudent', getPointsOfStudent);
 </script>
 
 <style scoped>

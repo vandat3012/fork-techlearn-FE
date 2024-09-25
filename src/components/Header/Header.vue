@@ -44,6 +44,7 @@
             </div>
         </nav>
     </header>
+    <Calendar @requestPoints="getPointsOfStudent" />
 </template>
 
 <script setup>
@@ -53,6 +54,7 @@ import { useStore } from 'vuex';
 import { toast } from 'vue3-toastify';
 import { computed } from 'vue';
 import axios from 'axios';
+import Calendar from '../Calendar/Calendar.vue';
 
 const router = useRouter();
 const toggleSidebar = inject('toggleSidebar');
@@ -111,6 +113,7 @@ const getPointsOfStudent = async () => {
         console.log(response.data.result.points);
         points.value = response.data.result.points;
         console.log(isUser)
+        await fetchPoints();
     } catch (error) {
         console.error(error);
     }

@@ -1,23 +1,73 @@
-import { createStore } from "vuex";
+import { createStore } from 'vuex';
+import axios from 'axios';
 
-export default createStore({
+const rootApi = process.env.VUE_APP_ROOT_API;
+
+const store = createStore({
   state: {
-    user: {
-      role: "",
-    },
-  },
-  getters: {
-    getUserRole: (state) => state.user.role,
+    user: null,
+    isLoggedIn: false,
+    supportPoints: 0
   },
   mutations: {
-    SET_USER_ROLE(state, role) {
-      state.user.role = role;
+    setUser(state, user) {
+      state.user = user;
     },
+    setLoggedIn(state, isLoggedIn) {
+      state.isLoggedIn = isLoggedIn;
+    },
+    setSupportPoints(state, points) {
+      state.supportPoints = points;
+    }
   },
   actions: {
-    setUserRole({ commit }, role) {
-      commit("SET_USER_ROLE", role);
+    async fetchUser({ commit }) {
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
+        commit('setLoggedIn', true);
+        try {
+          const response = await axios.get(`${rootApi}/users/me`, {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            }
+          });
+
+          if (response && response.data && response.data.result) {
+            commit('setUser', response.data.result);
+          } else {
+            commit('setUser', null);
+          }
+        } catch (error) {
+          commit('setUser', null);
+          commit('setLoggedIn', false);
+        }
+      } else {
+        commit('setLoggedIn', false);
+        commit('setUser', null);
+      }
     },
+    async fetchSupportPoints({ commit }, userId) {
+      const accessToken = localStorage.getItem("accessToken");
+
+      const response = await axios.get(`${rootApi}/users/points`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        params: {
+          idUser: userId
+        }
+      });
+
+      if (response && response.data && response.data.result) {
+        commit('setSupportPoints', response.data.result.points);
+      }
+    }
   },
-  modules: {},
+  getters: {
+    user: state => state.user,
+    isLoggedIn: state => state.isLoggedIn,
+    supportPoints: state => state.supportPoints
+  },
 });
+
+export default store;

@@ -2,16 +2,24 @@
   <div class="container">
     <p class="title">Khóa học của tôi</p>
     <div class="card-container">
-      <div class="card shadow" v-for="(course, index) in courses" :key="index" style="width: 18rem">
+      <div
+        class="card shadow"
+        v-for="(course, index) in courses"
+        :key="index"
+        style="width: 18rem"
+      >
         <!-- <img :src="course.image" class="card-img-top" alt="..." /> -->
-        <img :src="course.image" class="card-img-top " alt="..." />
-        <div class="card-body" @click="
-          router.push({
-            name: 'assignment',
-            params: { id: course.id },
-            query: { userID: userID },
-          })
-          ">
+        <img :src="course.image" class="card-img-top" alt="..." />
+        <div
+          class="card-body"
+          @click="
+            router.push({
+              name: 'assignment',
+              params: { id: course.id },
+              query: { userID: userID },
+            })
+          "
+        >
           <p>{{ course.name }}</p>
           <p class="card-text">
             {{ course.description }}
@@ -28,20 +36,20 @@
 
 <script setup>
 import axios from "axios";
-import { ref, onMounted, provide } from "vue";
+import { ref, onMounted, computed } from "vue";
 import avatar from "../../public/avatar.jpg";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const router = useRouter();
+const store = useStore();
 
 const rootApi = process.env.VUE_APP_ROOT_API;
 const courses = ref([]);
-const userID = ref("d8f6a72f-889c-4f2f-b7b7-f8b9e7b77d4b");
+const userID = ref(store.getters.user.id);
 
 const fetchCourses = async () => {
-  const response = await axios.get(
-    `${rootApi}/courses?id=${userID.value}`
-  );
+  const response = await axios.get(`${rootApi}/courses?id=${userID.value}`);
   courses.value = response.data.result.items;
 };
 

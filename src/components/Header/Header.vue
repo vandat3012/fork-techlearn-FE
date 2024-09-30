@@ -36,7 +36,7 @@
                             <link class="name-color">{{ user.fullName }}</link>
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
-                                <img :src="user.avatar" class="rounded-circle avatar" alt="User Avatar">
+                                <img :src="user?.avatar" class="rounded-circle avatar" alt="User Avatar">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#">Thông tin cá nhân</a>

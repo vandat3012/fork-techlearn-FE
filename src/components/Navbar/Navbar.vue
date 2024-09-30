@@ -6,10 +6,10 @@
       </div>
       <ul class="list-unstyled components">
 
-        <li v-if="isTeacher" class="active">
+        <li v-if="isTeacher || isMentor" class="active">
 
         <li>
-          <router-link to="/teacher" class="nav-link">Lịch giảng viên</router-link>
+          <router-link to="/teacher" class="nav-link">Lịch cá nhân</router-link>
         </li>
         </li>
 
@@ -46,6 +46,7 @@ onMounted(() => {
 
 const isTeacher = computed(() => user.value?.roles.some(role => role.name === "TEACHER"));
 const isUser = computed(() => user.value?.roles.some(role => role.name === "USER"));
+const isMentor = computed(() => user.value?.roles.some(role => role.name === "MENTOR"));
 
 </script>
 

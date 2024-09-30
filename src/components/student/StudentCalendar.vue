@@ -1,81 +1,69 @@
 <template>
-    <div class="student-calendar">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 mb-4">
-                    <div class="card student-info">
-                        <div class="card-body d-flex flex-column align-items-center">
-                            <img class="rounded-circle mb-3" :src="user?.avatar" alt="Student avatar" width="100" height="100">
-                            <h5 class="card-title mb-1">{{ user?.fullName }}</h5>
-                            <p class="card-text text-muted mb-2">Học viên</p>
-                            <p class="card-text text-muted small mb-3">{{ user?.email }}</p>
-                            <button @click="toggleCalendarForm" :class="['btn', 'w-100', stateButtonFormStudent ? 'btn-danger' : 'btn-primary']">
-                                <i v-if="!stateButtonFormStudent" class="fas fa-plus me-2"></i>
-                                <i v-else class="fas fa-times me-2"></i>
-                                {{ stateButtonFormStudent ? 'Đóng form' : 'Tạo lịch' }}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-9">
-                    <div v-if="stateButtonFormStudent" class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title mb-4">Tìm kiếm lịch</h5>
-                            <form @submit.prevent="searchCalendar" class="calendar-search-form">
-                                <div class="row g-3 align-items-end">
-                                    <div class="col-md-4">
-                                        <label class="form-label" for="course">Khóa học</label>
-                                        <select class="form-select" name="course" v-model="course" @change="onCourseChange">
-                                            <option :value="null" disabled selected hidden>Chọn Khóa học</option>
-                                            <option class="modify-option" v-for="course in listCourse" :key="course.id" :value="course">
-                                                {{ course.name }}
-                                            </option>
-                                        </select>
-                                        <small class="text-danger">{{ courseError }}</small>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="chapter">Chương</label>
-                                        <select class="form-select" id="chapter" v-model="chapter" @change="onChuongChange">
-                                            <option :value="null" disabled selected hidden>Chọn chương</option>
-                                            <option class="modify-option" v-for="chapter in listChapters" :key="chapter.id" :value="chapter">
-                                                {{ chapter.name }}
-                                            </option>
-                                        </select>
-                                        <small class="text-danger">{{ chapterError }}</small>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="teacher">Mentor</label>
-                                        <select class="form-select" id="teacher" v-model="teacher">
-                                            <option :value="null" selected>Chọn giảng viên</option>
-                                            <option class="modify-option" v-for="teacher in teachers" :key="teacher.Id" :value="teacher">
-                                                {{ teacher.OwnerText }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="fas fa-filter"></i> &nbsp; Lọc
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-4">
-                                {{ !stateButtonFormStudent ? 'Lịch học' : 'Lịch giảng viên / Người hướng dẫn' }}
-                            </h5>
-                            <Calendar :url="stateButtonFormStudent ? url : urlCalendarOfStudent" :clickable="isFilterApplied"
-                                :calendarType="stateButtonFormStudent ? 'other' : 'mine'" :ownerId="stateButtonFormStudent ? ownerId : ''" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="student-calendar">
+    <div class="container">
+      <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+          <h2 class="mb-0">{{ !stateButtonFormStudent ? 'Lịch học' : 'Lịch giảng viên' }}</h2>
+          <button @click="toggleCalendarForm" :class="['btn', stateButtonFormStudent ? 'btn-danger' : 'btn-primary']">
+            <i v-if="!stateButtonFormStudent" class="fas fa-plus me-2"></i>
+            <i v-else class="fas fa-times me-2"></i>
+            {{ stateButtonFormStudent ? 'Đóng form' : 'Tạo lịch' }}
+          </button>
         </div>
+      </div>
+
+      <div v-if="stateButtonFormStudent" class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-4">Tìm kiếm lịch</h5>
+          <form @submit.prevent="searchCalendar" class="calendar-search-form">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label" for="course">Khóa học</label>
+                <select class="form-select" name="course" v-model="course" @change="onCourseChange">
+                  <option :value="null" disabled selected hidden>Chọn Khóa học</option>
+                  <option class="modify-option" v-for="course in listCourse" :key="course.id" :value="course">
+                    {{ course.name }}
+                  </option>
+                </select>
+                <small class="text-danger">{{ courseError }}</small>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label" for="chapter">Chương</label>
+                <select class="form-select" id="chapter" v-model="chapter" @change="onChuongChange">
+                  <option :value="null" disabled selected hidden>Chọn chương</option>
+                  <option class="modify-option" v-for="chapter in listChapters" :key="chapter.id" :value="chapter">
+                    {{ chapter.name }}
+                  </option>
+                </select>
+                <small class="text-danger">{{ chapterError }}</small>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label" for="teacher">Giảng viên</label>
+                <select class="form-select" id="teacher" v-model="teacher">
+                  <option :value="null" selected>Chọn giảng viên</option>
+                  <option class="modify-option" v-for="teacher in teachers" :key="teacher.Id" :value="teacher">
+                    {{ teacher.OwnerText }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fas fa-filter"></i> &nbsp; Lọc
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <Calendar :url="stateButtonFormStudent ? url : urlCalendarOfStudent" :clickable="isFilterApplied"
+            :calendarType="stateButtonFormStudent ? 'other' : 'mine'" :ownerId="stateButtonFormStudent ? ownerId : ''" />
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -248,65 +236,28 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.student-info {
-    transition: all 0.3s ease;
-}
-
-.student-info:hover {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.form-select:focus,
-.form-control:focus {
-    border-color: #31D2F2;
-    box-shadow: 0 0 0 0.2rem rgba(49, 210, 242, 0.25);
+.student-calendar {
+  margin-top: 2rem;
 }
 
 .calendar-search-form .row {
-    position: relative;
+  position: relative;
 }
 
 .calendar-search-form .text-danger {
-    position: absolute;
-    top: 100%;
-    left: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
 }
 
-.calendar-search-form .col-md-4,
-.calendar-search-form .col-md-3,
-.calendar-search-form .col-md-2 {
-    display: flex;
-    flex-direction: column;
-}
-
-.calendar-search-form .col-md-2 {
-    justify-content: flex-end;
+.calendar-search-form .col-md-3 {
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 767.98px) {
-    .student-info {
-        margin-bottom: 2rem;
-    }
-}
-
-.calendar-search-form .row {
-    position: relative;
-}
-
-.calendar-search-form .text-danger {
-    position: absolute;
-    top: 100%;
-    left: 0;
-}
-
-.calendar-search-form .col-md-4,
-.calendar-search-form .col-md-3,
-.calendar-search-form .col-md-2 {
-    display: flex;
-    flex-direction: column;
-}
-
-.calendar-search-form .col-md-2 {
-    justify-content: flex-end;
+  .student-calendar h2 {
+    font-size: 1.5rem;
+  }
 }
 </style>

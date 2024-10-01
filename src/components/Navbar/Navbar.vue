@@ -1,18 +1,13 @@
 <template>
   <div class="wrapper">
-    <nav id="sidebar" :class="{ 'active': isSidebarCollapsed }">
+    <nav id="sidebar" :class="{ active: isSidebarCollapsed }">
       <div class="sidebar-header">
         <h3>TechLearn</h3>
       </div>
       <ul class="list-unstyled components">
-
         <li v-if="isTeacher || isMentor" class="active">
-
-        <li>
           <router-link to="/teacher" class="nav-link">Lịch cá nhân</router-link>
         </li>
-        </li>
-
         <li v-if="isUser">
           <router-link to="/student" class="nav-link">Đặt lịch học</router-link>
         </li>
@@ -27,29 +22,31 @@
   </div>
 </template>
 
-
 <script setup>
-
 import { onMounted, ref, computed } from "vue";
-import { inject } from 'vue';
-import { useStore } from 'vuex';
+import { inject } from "vue";
+import { useStore } from "vuex";
 
-const isSidebarCollapsed = inject('isSidebarCollapsed');
+const isSidebarCollapsed = inject("isSidebarCollapsed");
 const store = useStore();
 const user = computed(() => store.getters.user);
 
 onMounted(() => {
   if (!store.getters.isLoggedIn) {
-    store.dispatch('fetchUser');
+    store.dispatch("fetchUser");
   }
 });
 
-const isTeacher = computed(() => user.value?.roles.some(role => role.name === "TEACHER"));
-const isUser = computed(() => user.value?.roles.some(role => role.name === "USER"));
-const isMentor = computed(() => user.value?.roles.some(role => role.name === "MENTOR"));
-
+const isTeacher = computed(() =>
+  user.value?.roles.some((role) => role.name === "TEACHER")
+);
+const isUser = computed(() =>
+  user.value?.roles.some((role) => role.name === "USER")
+);
+const isMentor = computed(() =>
+  user.value?.roles.some((role) => role.name === "MENTOR")
+);
 </script>
-
 
 <style scoped>
 .navbar-container {
@@ -68,7 +65,7 @@ const isMentor = computed(() => user.value?.roles.some(role => role.name === "ME
 }
 
 .active {
-  background-color: #4A4A8E;
+  background-color: #4a4a8e;
   font-weight: bold;
   border-radius: 5px;
 }
@@ -87,7 +84,7 @@ const isMentor = computed(() => user.value?.roles.some(role => role.name === "ME
 #sidebar {
   min-width: 220px;
   max-width: 220px;
-  background: #4A4A8E;
+  background: #4a4a8e;
   color: #ffffff;
   transition: all 0.3s;
 }
@@ -121,14 +118,13 @@ const isMentor = computed(() => user.value?.roles.some(role => role.name === "ME
 }
 
 #sidebar ul li a:hover {
-  background: #5B5BAD;
+  background: #5b5bad;
 }
 
 #sidebar ul li.active>a,
 a[aria-expanded="true"] {
-  background: #5B5BAD;
+  background: #5b5bad;
 }
-
 
 #sidebar.active {
   margin-left: -220px;
@@ -136,7 +132,7 @@ a[aria-expanded="true"] {
 
 .router-link-active,
 .router-link-exact-active {
-  background-color: #5B5BAD;
+  background-color: #5b5bad;
   color: #ffffff;
 }
 

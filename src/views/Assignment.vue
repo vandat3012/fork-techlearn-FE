@@ -50,8 +50,8 @@
             </div>
             <div :id="'collapse' + index" :class="index === 0 ? 'collapse show' : 'collapse'"
               :aria-labelledby="'heading' + index">
-              <div v-for="(item, itemIndex) in assignments">
-                <div class="card-body assignment-card" v-if="item.chapter.id === chapter.id" :key="itemIndex" @click="
+              <div v-for="(item, itemIndex) in assignments" :key="itemIndex">
+                <div class="card-body assignment-card" v-if="Number(item?.chapter) === Number(chapter?.id)" @click="
                   router.push({
                     name: 'submitAssignment',
                     params: { id: item.id },
@@ -61,7 +61,7 @@
                   <div class="assignment">
                     <i class="fa fa-book"></i>
                     <p class="ml-2 assignment-title">
-                      {{ item.name }}
+                      {{ item.title }}
                     </p>
                   </div>
                 </div>
@@ -98,10 +98,10 @@ const fetchCourseData = async () => {
     const response = await axios.get(
       `${rootApi}/chapters?idCourse=${courseId}`
     );
-    courseData.value = response.data.result;
+    courseData.value = response.data.result.items.data;
 
-    filteredChapters.value = courseData.value.listChapter;
-    totalLessons.value = calculateTotalLessons(courseData.value.listChapter);
+    filteredChapters.value = courseData.value;
+    totalLessons.value = calculateTotalLessons(courseData.value);
   } catch (error) {
     console.error("Error when fetching courses: ", error);
   }
@@ -111,51 +111,16 @@ const fetchAssignment = async () => {
   const courseId = route.params.id;
   try {
     const response = await axios.get(
-      `${rootApi}/assignments?courseId=${courseId}&userId=${userId}`
+      //`${rootApi}/assignments?courseId=${courseId}&userId=${userId}`
+      `${rootApi}/assignments`
     );
-    assignments.value = response.data.result.items;
+    assignments.value = response.data.result.items.data;
   } catch (error) { }
 };
 
 const calculateTotalLessons = (chapters) => {
   return chapters ? chapters.length : 0;
 };
-
-/* const fetchFilteredData = async () => {
-  const courseId = route.params.id;
-  try {
-    const response = await axios.get(`${rootApi}/api/v1/chapters/${courseId}`, {
-      params: {
-        search: searchQuery.value,
-        filter: selectedFilter.value,
-      },
-    });
-    const data = response.data;
-    filteredChapters.value = data.chapters;
-    totalLessons.value = calculateTotalLessons(data.chapters);
-  } catch (error) {
-    console.error("Error when fetching data (filter):", error);
-  }
-}; */
-/* const fetchFilteredData = async () => {
-  const courseId = route.params.id;
-  const userId = route.query.userID;
-  try {
-    const response = await axios.get(`${rootApi}/api/v1/assignments`, {
-      params: {
-        courseId: courseId,
-        userId: userId,  // assuming you have this user ID in your Vuex or state
-        search: searchQuery.value,  // Optional search parameter
-        status: selectedFilter.value  // Optional status parameter (e.g. 'PENDING', 'PASS', 'FIX_REVIEW')
-      },
-    });
-    const data = response.data.result;  // Adjust according to your API response structure
-    filteredChapters.value = data;  // Assuming the assignments are directly returned
-  } catch (error) {
-    console.error("Error when fetching data (filter):", error);
-  }
-}; */
-
 
 onMounted(async () => {
   await fetchCourseData();

@@ -129,7 +129,7 @@ const getChapters = async () => {
                 'Authorization': `Bearer ${accessToken}`
             }
         });
-        listChapters.value = res.data.result.listChapter;
+        listChapters.value = res.data.result.items.data;
     } catch (error) {
         console.log(error);
     }
@@ -176,7 +176,7 @@ const fetchCoursesByUser = async () => {
         });
 
         if (res.status === 200) {
-            listCourse.value = res.data.result.items;
+            listCourse.value = res.data.result.items.data;
         } else {
             console.error("Error fetching courses");
             toast.error("Không thể lấy danh sách khóa học");
@@ -195,7 +195,7 @@ const fetchChaptersByCourseId = async (courseId) => {
         });
 
         if (res.status === 200) {
-            listChapters.value = res.data.result.listChapter;
+            listChapters.value = res.data.result.items.data;
         } else {
             console.error("Error fetching chapters");
             toast.error("Không thể lấy danh sách chương");

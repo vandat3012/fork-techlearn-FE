@@ -8,8 +8,7 @@
         :key="index"
         style="width: 18rem"
       >
-        <!-- <img :src="course.image" class="card-img-top" alt="..." /> -->
-        <img :src="course.image" class="card-img-top" alt="..." />
+        <img :src="course.thumbnailUrl" class="card-img-top" alt="..." />
         <div
           class="card-body"
           @click="
@@ -50,7 +49,7 @@ const userID = ref(store.getters.user.id);
 
 const fetchCourses = async () => {
   const response = await axios.get(`${rootApi}/courses?id=${userID.value}`);
-  courses.value = response.data.result.items;
+  courses.value = response.data.result.items.data;
 };
 
 onMounted(async () => {

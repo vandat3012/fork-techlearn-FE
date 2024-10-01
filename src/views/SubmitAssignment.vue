@@ -3,11 +3,10 @@
     <!-- Nội dung bài tập -->
     <div class="assignment-container" v-if="assignmentDescription">
       <div class="title-container">
-        <p>{{ assignmentDescription.name }}</p>
         <button @click="viewSolution">Xem cách giải</button>
       </div>
       <div class="assignment-description">
-        <div ref="description" class="description-text" v-html="format(assignmentDescription.description)"></div>
+        <div ref="description" class="description-text" v-html="format(assignmentDescription.content)"></div>
       </div>
     </div>
     <div v-else>
@@ -52,16 +51,6 @@
           </div>
           <div class="modal-body">
             <div v-if="result.length > 0">
-              <!-- <div v-for="(res, index) in result" :key="index">
-                <p
-                  style="font-size: 18px; font-weight: 550; margin-bottom: 15px"
-                >
-                  Lần nộp thứ {{ index + 1 }}
-                </p>
-                <p>{{ formatDateString(res.createdDate) }}</p>
-                <div class="response-AI-text" v-html="format(res.review)"></div>
-              </div> -->
-
               <div class="accordion" id="accordionExample">
                 <div class="accordion-item" v-for="(res, index) in result" :key="index">
                   <h2 class="accordion-header">
@@ -105,8 +94,6 @@ const route = useRoute();
 const assignmentDescription = ref(null);
 const githubLink = ref("");
 var result = ref([]);
-const idUser = ref("");
-const idAssignment = ref("");
 const isLoading = ref(false);
 const rootApi = process.env.VUE_APP_ROOT_API;
 const description = ref(null);
@@ -138,7 +125,7 @@ const fetchLastResult = async () => {
       `${rootApi}/reviews/${assignmentId}?id=${id}`
     );
     lastResult.value = response.data.result;
-    isPassed.value = response.data.result.status === "PASS" ? true : false;
+    isPassed.value = response.data.result.status === "Pass" ? true : false;
   } catch (error) { }
 };
 
@@ -147,7 +134,7 @@ const fetchAssignments = async () => {
     const response = await axios.get(
       `${rootApi}/assignments/${assignmentId}`
     );
-    assignmentDescription.value = response.data.result;
+    assignmentDescription.value = response.data.result.data;
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu:", error);
   }
@@ -160,18 +147,14 @@ const submitAssignment = async () => {
       `${rootApi}/reviews/fetch-repo-content`,
       {
         github_link: githubLink.value,
-        exerciseTitle:
-          assignmentDescription.value.name +
-          " yêu cầu: " +
-          assignmentDescription.value.description +
-          " ",
-          idUser: id,
-          idAssignment: assignmentId,
+        exerciseTitle: assignmentDescription.value.content,
+        idUser: id,
+        idAssignment: assignmentId
       }
     );
     const data = response.data;
     await fetchLastResult();
-    isPassed.value = data.result.status === "PASS" ? true : false;
+    isPassed.value = data.result.status === "Pass" ? true : false;
     isLoading.value = false;
   } catch (error) {
     console.log(error);

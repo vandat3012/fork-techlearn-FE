@@ -37,7 +37,7 @@
                                 <img :src="user?.avatar" class="rounded-circle avatar" alt="User Avatar">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">Thông tin cá nhân</a>
+                                <a class="dropdown-item" href="#" @click="showUserModal">Thông tin cá nhân</a>
                                 <div class="dropdown-divider"></div>
                                 <p class="dropdown-item" @click="handleLogout">Đăng xuất</p>
                             </div>
@@ -46,6 +46,7 @@
                 </div>
             </div>
         </nav>
+        <UserModal :isOpen="isUserModalOpen" @update:isOpen="isUserModalOpen = false" />
     </header>
     <div>
         <PointPurchaseModal v-if="isLoggedIn && isUser" :show="showPointModal" @close="closePointModal" />
@@ -59,6 +60,7 @@ import { useStore } from 'vuex';
 import { toast } from 'vue3-toastify';
 import { computed } from 'vue';
 import axios from 'axios';
+import UserModal from './UserModal.vue';
 import PointPurchaseModal from '../Modal/PointsPurcharseModal.vue';
 
 const router = useRouter();
@@ -67,6 +69,8 @@ const toggleSidebar = inject('toggleSidebar');
 const store = useStore();
 const isLoggedIn = computed(() => store.getters.isLoggedIn);
 const user = computed(() => store.getters.user);
+const isUserModalOpen = ref(false);
+const points = ref(0);
 const isUser = computed(() => {
     return user.value?.roles?.some(role => role.name === "USER") || false;
 });
@@ -87,7 +91,9 @@ onMounted(() => {
     }
 });
 
-
+const showUserModal = () => {
+    isUserModalOpen.value = true; 
+};
 const handleLogout = async () => {
     try {
         const accessToken = localStorage.getItem("accessToken");

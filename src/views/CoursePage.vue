@@ -56,7 +56,6 @@ onMounted(async () => {
   await fetchCourses();
 });
 </script>
-
 <style scoped>
 .card-container {
   margin-top: 20px;

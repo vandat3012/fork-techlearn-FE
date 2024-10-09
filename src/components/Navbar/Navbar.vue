@@ -121,7 +121,7 @@ const isMentor = computed(() =>
   background: #5b5bad;
 }
 
-#sidebar ul li.active>a,
+#sidebar ul li.active > a,
 a[aria-expanded="true"] {
   background: #5b5bad;
 }
